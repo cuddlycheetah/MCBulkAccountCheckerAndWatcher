@@ -10,7 +10,7 @@ services:
     volumes:
       - "./mongodb/:/data/db"
   mcbulkaccountcheckerandwatcher:
-    image: "cuddlycheetah/MCBulkAccountCheckerAndWatcher"
+    image: "cuddlycheetah/mcbulkaccountcheckerandwatcher"
     restart: unless-stopped
     links:
       - mongo
