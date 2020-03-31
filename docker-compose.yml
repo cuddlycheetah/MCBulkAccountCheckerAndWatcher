@@ -1,0 +1,20 @@
+version: '3'
+services:
+  # You can also use a MongoDB Atlas, you just need to comment this Container out and change the config.json
+  mongo:
+    image: "mongo:latest"
+    restart: unless-stopped
+    hostname: mongodb
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - "./mongodb/:/data/db"
+  mcbulkaccountcheckerandwatcher:
+    image: "cuddlycheetah/MCBulkAccountCheckerAndWatcher"
+    restart: unless-stopped
+    links:
+      - mongo
+    volumes:
+      - ./config.json/:/usr/src/config.json
+    ports:
+      - "6969:6969/tcp"

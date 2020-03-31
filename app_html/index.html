@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-app-bar app>
+                <v-toolbar-title>
+                    <b>MC</b> <b>A</b>ccount <b>C</b>hecker and <b>I</b>ntegrity <b>V</b>alidator
+                    <sub>by <a href="https://github.com/cuddlycheetah">CuddlyCheetah</a></sub>
+                </v-toolbar-title>
+            </v-app-bar>
+            <v-content>
+                <!--
+                    hello to anyone, who reads this :3
+                -->
+                <v-container>
+                    <v-data-table must-sort :footer-props="footerProps" :options="options" :loading="loading" loading-text="Loading... Please wait" :headers="headers" item-key="_id" :items="accountData" :items-per-page="5"
+                        class="elevation-1" :search="search" :custom-filter="filterOnlyCapsText">
+                        <template v-slot:top>
+                            <v-text-field v-model="search" label="Search" class="mx-4"></v-text-field>
+                        </template>
+                        <template v-slot:no-data>
+                            No Accounts to show
+                        </template>
+                        <template v-slot:item.uuid="{ item }">
+                            <tr>
+                                <td :colspan="headers.length">
+                                    <img v-if="item.validState == 1" :alt="item.uuid"
+                                        :src="'https://www.mc-heads.net/avatar/' + item.uuid + '/48/nohelm.png'">
+                                    <img v-if="item.validState == -1" :src="'Barrier_2.png'">
+                                </td>
+                            </tr>
+                        </template>
+                    </v-data-table>
+                    <hr>
+                    Import Bulk Accounts
+                    <v-textarea outlined v-model="bulkImportText" label="Bulk Import Data" placeholder="[username]:<user/email>:<password>
+..."></v-textarea>
+                    <v-btn :disabled="isBulkTextValid()" raised @click="bulkImport()">Import</v-btn>
+                </v-container>
+            </v-content>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            //vueResource: new vueResource(),
+            http: {
+                root: '/',
+            },
+            data() {
+                return {
+                    loading: true,
+                    search: '',
+                    options: {
+                        itemsPerPage: -1,
+                        groupBy: ['validState'],
+                        groupDesc: ['validState']
+                    },
+                    footerProps: {
+                        itemsPerPageOptions: [ -1, 5, 10, 20, 50, 75, 100 ]
+                    },
+                    validStateLUT: {
+                        [-1]: '❌ Invalid',
+                        [0]: '❔ Unknown',
+                        [1]: '✅ Valid'
+                    },
+                    headers: [
+                        { text: 'UUID', align: 'start', groupable: false, sortable: false, value: 'uuid', },
+                        { text: 'State', value: 'validStateText', groupable: true },
+                        { text: 'E-Mail', value: 'email', groupable: false },
+                        { text: 'Username', value: 'username', groupable: false },
+                        { text: 'Passwort', value: 'password', groupable: false },
+                    ],
+                    accountData: [],
+                    bulkImportText: '',
+                }
+            },
+            created() {
+                this.refresh()
+            },
+            methods: {
+                refresh() {
+                    this.$http.get('/api/accounts').then(response => {
+                        this.accountData = response.body.map(item => {
+                            item.validStateText = this.validStateLUT[item.validState]
+                            return item
+                        })
+                        //this.accountData.sort((a,b) => a.validState - b.validState)
+                        this.loading = false
+                    }, response => {
+                    })
+                },
+                isBulkTextValid() {
+                    return this.bulkImportText.length < 0 || this.bulkImportText.indexOf(':') === -1
+                },
+                bulkImport() {
+                    console.log(this.bulkImportText)
+                    const accounts = this.bulkImportText.split('\n')
+                    console.log(accounts)
+                    this.$http.post('/api/import', JSON.stringify(accounts)).then(response => {
+                        this.bulkImportText = response.body
+                        this.refresh()
+                    }, console.error)
+                },
+            }
+
+        })
+    </script>
+</body>
+
+</html>
