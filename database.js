@@ -1,12 +1,12 @@
-const config = require('./config')
+//const config = require('./config')
 const mongoose = require('mongoose')
 const mongoOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: true,
-    dbName: config.mongodbName
+    dbName: process.env.MONGO_DBNAME || 'mcaccountschecker',
 }
-mongoose.connect(config.mongodbURI, mongoOptions, (err) => {
+mongoose.connect(process.env.MONGO_DBURI || 'mongodb://admin:admin@mongo:27017', mongoOptions, (err) => {
     if (!!err) process.exit(1)
     console.log('CONNECTED TO MONGODB')
 })

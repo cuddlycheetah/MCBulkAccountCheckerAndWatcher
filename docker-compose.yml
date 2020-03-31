@@ -15,9 +15,11 @@ services:
   mcbulkaccountcheckerandwatcher:
     image: "cuddlycheetah/mcbulkaccountcheckerandwatcher"
     restart: unless-stopped
+    # if you dont need the mongodb container, mae sure to remove these two lines too
     links:
       - mongo
-    volumes:
-      - ./config.json/:/usr/src/config.json
+    environment:
+      - MONGO_DBURI: 'mongodb://admin:admin@mongo:27017'
+      - MONGO_DBNAME: 'mcaccountschecker'
     ports:
       - "6969:6969/tcp"
