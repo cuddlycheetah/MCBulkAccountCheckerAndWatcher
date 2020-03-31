@@ -10,7 +10,7 @@ app.use('/', serveStatic(require('path').join(__dirname, 'app_html')))
 const { mongoose, Models } = require('./database')
 
 const processOneAccount = async () => {
-    let theAccount = await Models.MCAccount.find({ validState: { $gte: 0 } }).sort({ validState: 1, lastUpdate: -1 }).limit(1)
+    let theAccount = await Models.MCAccount.find({ validState: { $gte: 0 } }).sort({ validState: 1, lastUpdate: 1 }).limit(1)
     theAccount = theAccount[0]
     console.log(theAccount)
     try {
