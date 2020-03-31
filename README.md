@@ -1,5 +1,5 @@
 # MCBulkAccountCheckerAndWatcher
-Dump bulk-account-lists and validate them (over time)
+Dump bulk-account-lists and validate them (over time). Do WHATEVER You want with it, i dont care.
 
 ## Installation
 ```
