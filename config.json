@@ -1,4 +1,4 @@
 {
-    "mongodbURI": "mongodb://admin:admin@db:27017",
+    "mongodbURI": "mongodb://admin:admin@mongo:27017",
     "mongodbName": "mcaccountschecker"
 }
