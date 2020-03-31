@@ -19,7 +19,7 @@ services:
     links:
       - mongo
     environment:
-      - MONGO_DBURI: 'mongodb://admin:admin@mongo:27017'
-      - MONGO_DBNAME: 'mcaccountschecker'
+      - MONGO_DBURI='mongodb://admin:admin@mongo:27017'
+      - MONGO_DBNAME='mcaccountschecker'
     ports:
       - "6969:6969/tcp"
